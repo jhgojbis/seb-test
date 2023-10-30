@@ -19,10 +19,10 @@ public class PlaceController {
 
     private final PlaceHolderService service;
 
-    @PostMapping(path = "/posts", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<String>> post(@Valid @RequestBody PlaceHolderRequest data) {
-        log.info("PlaceHolderRequest request {}", data);
-        return service.postPlaceHolder(data)
+    @PostMapping(path = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<String>> create(@Valid @RequestBody PlaceHolderRequest data) {
+        log.info("request {}", data);
+        return service.createPlaceholderSource(data)
                 .map(ResponseEntity::ok);
     }
 

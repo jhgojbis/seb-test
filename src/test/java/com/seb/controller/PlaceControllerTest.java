@@ -28,7 +28,7 @@ class PlaceControllerTest {
     private PlaceHolderService service;
 
     @Test
-    void testPOSTPlaceHolderRequest() {
+    void testCreatePlaceholder() {
         var postResponse = """
                 {
                   "title": "foo",
@@ -41,11 +41,11 @@ class PlaceControllerTest {
         // given
         PlaceHolderRequest data = new PlaceHolderRequest("foo", "bar", 1);
         // when
-        when(service.postPlaceHolder(any(PlaceHolderRequest.class)))
+        when(service.createPlaceholderSource(any(PlaceHolderRequest.class)))
                 .thenReturn(Mono.just(postResponse));
         // then
         client.post()
-                .uri("/api/v1/placeholder/posts")
+                .uri("/api/v1/placeholder/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(data)
                 .exchange()
@@ -55,16 +55,16 @@ class PlaceControllerTest {
     }
 
     @Test
-    void testPOSTPlaceHolderWithError() {
+    void testCreatePlaceholderErrorHandling() {
         // given
         PlaceHolderRequest data = new PlaceHolderRequest("foo", "bar", 1);
         String errorMessage = "An error occurred";
         // when
-        when(service.postPlaceHolder(any(PlaceHolderRequest.class)))
+        when(service.createPlaceholderSource(any(PlaceHolderRequest.class)))
                 .thenReturn(Mono.error(new CustomPlaceHolderException(errorMessage, new Exception("Error"))));
         // then
         client.post()
-                .uri("/api/v1/placeholder/posts")
+                .uri("/api/v1/placeholder/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(data)
                 .exchange()
@@ -74,7 +74,7 @@ class PlaceControllerTest {
     }
 
     @Test
-    void testGETPlaceHolder() {
+    void testFetchPlaceholderByUserId() {
         // given
         var userId = "1";
         var getResponse = """
@@ -91,7 +91,6 @@ class PlaceControllerTest {
         // when
         when(service.getPlaceHolderByUserId(userId)).thenReturn(Mono.just(getResponse));
 
-
         // then
         client.get()
                 .uri(uri)
@@ -102,8 +101,7 @@ class PlaceControllerTest {
     }
 
     @Test
-    void testGETNestedPlaceHolder() {
-        // given
+    void testFetchCommentsByPlaceholderId() {
         var nestedResponse = """
                   {
                     "postId": 1,
@@ -113,11 +111,9 @@ class PlaceControllerTest {
                     "body": "fooo body"
                   },\
                 """;
-        // when
         when(service.getPlaceHolderByUserId(any(String.class))).thenReturn(Mono.just("SomeResponse"));
         when(service.fetchCommentsByPlaceHolderResponse(anyString())).thenReturn(Mono.just(nestedResponse));
 
-        // then
         client.get()
                 .uri("/api/v1/placeholder/comments/1")
                 .exchange()

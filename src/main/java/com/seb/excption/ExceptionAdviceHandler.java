@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionAdviceHandler {
 
     @ExceptionHandler(CustomPlaceHolderException.class)
-    public ResponseEntity<String> handlePlaceHolderException(CustomPlaceHolderException e) {
-        log.error("Handling CustomPlaceHolderException: {}", e.getMessage());
+    public ResponseEntity<String> handleCustomPlaceHolderException(CustomPlaceHolderException e) {
+        log.error("Handling CustomPlaceHolderException: {}", e.getLocalizedMessage());
         return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         String errorMessage = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        log.error("Handling Validation Exception: {}", errorMessage);
+        log.error("Handling MethodArgumentNotValidException : {}", errorMessage);
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
 }

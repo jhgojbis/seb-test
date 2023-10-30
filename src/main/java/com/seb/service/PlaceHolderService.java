@@ -27,7 +27,7 @@ public class PlaceHolderService {
         return new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    public Mono<String> postPlaceHolder(PlaceHolderRequest data) {
+    public Mono<String> createPlaceholderSource(PlaceHolderRequest data) {
         return Mono.fromCallable(() -> mapper().writeValueAsString(data))
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(body -> {
@@ -42,7 +42,7 @@ public class PlaceHolderService {
                         }
                 )
                 .onErrorMap(originalException ->
-                        new CustomPlaceHolderException("Error when calling post", originalException));
+                        new CustomPlaceHolderException("Error when creating a source", originalException));
     }
 
     public Mono<String> getPlaceHolderByUserId(String userId) {
@@ -63,15 +63,15 @@ public class PlaceHolderService {
                 .collectList()
                 .map(Object::toString)
                 .onErrorMap(originalException ->
-                        new CustomPlaceHolderException("Error when calling get", originalException));
+                        new CustomPlaceHolderException("Error when fetching placeholder response", originalException));
     }
+
     private Mono<String> getCommentsByPostId(String postId) {
         String uriString = UriComponentsBuilder
                 .fromPath("/posts/{postId}/comments")
                 .buildAndExpand(postId)
                 .toUriString();
-        var errorMessage = "Error when calling get comment by postId";
-        return webClientGetCall(uriString, errorMessage);
+        return webClientGetCall(uriString, "Error when calling get comment by postId");
     }
 
     private Mono<String> webClientGetCall(String uriString, String errorMessage) {
