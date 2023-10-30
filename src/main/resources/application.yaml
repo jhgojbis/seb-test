@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: seb
+
+server:
+  servlet:
+    context-path: /seb
+  port: 8080
+
+placeholder:
+  base_url: https://jsonplaceholder.typicode.com/
+
